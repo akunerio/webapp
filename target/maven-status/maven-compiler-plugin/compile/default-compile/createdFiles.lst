@@ -1,0 +1,6 @@
+models/Product.class
+com/mycompany/webapp/JakartaRestConfiguration.class
+controllers/AuthController.class
+com/mycompany/webapp/resources/JakartaEE11Resource.class
+controllers/HomeController.class
+controllers/ProductController.class
