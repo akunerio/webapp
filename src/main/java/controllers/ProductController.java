@@ -40,6 +40,16 @@ public class ProductController extends HttpServlet {
             request.setAttribute("list", prods);
             
             request.getRequestDispatcher("view_product.jsp").forward(request, response);
+        } else if("qb".equals(menu)) {
+            request.setAttribute("title", "Daftar Produk dengan Query Builder");
+            Product p = new Product();
+            p.select("id, name, price");
+            p.where("price < 10000000");
+            p.addQuery("ORDER BY name DESC");
+            ArrayList<Product> prods = p.get();
+            request.setAttribute("list", prods);
+            
+            request.getRequestDispatcher("view_product.jsp").forward(request, response);
         } else if ("add".equals(menu)) {
             request.setAttribute("title", "Tambah Produk");
             request.getRequestDispatcher("form_product.jsp").forward(request, response);

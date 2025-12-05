@@ -26,19 +26,30 @@ public class Product extends Model<Product>{
     
     @Override
     Product toModel(ResultSet rs) {
-        try {
-            return new Product(
-                rs.getInt("id"),
-                rs.getString("name"),
-                rs.getDouble("price")
-            );
+       
+       try {
+            if (select.equals("*")) {
+                return new Product(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getDouble("price")
+                );
+            } else {
+                Product p = new Product();
+                if (select.contains("id"))
+                    p.setId(rs.getInt("id"));
+                if (select.contains("name"))
+                    p.setName(rs.getString("name"));
+                if (select.contains("price"))
+                    p.setPrice(rs.getInt("price"));
+                return p;
+            }
         } catch (Exception e) {
             setMessage(e.getMessage());
         }
         return null;
     }
 
-    // 2. Getters and Setters for id
     public int getId() {
         return id;
     }
