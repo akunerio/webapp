@@ -30,30 +30,36 @@ public class ProductController extends HttpServlet {
             return;
         }
 
-        String menu = request.getParameter("action");
+        String menu = request.getParameter("menu");
 
         if(menu == null) { //view menu
             //get all data from database
             request.setAttribute("title", "Daftar Produk");
             
-            ArrayList<Product> prods = new ArrayList<>();
-            prods.add(new Product(1, "Nasi Goreng", 15000));
-            prods.add(new Product(2, "Nasi Mawud", 20000));
-            prods.add(new Product(3, "Nasi Liwet", 30000));
-            prods.add(new Product(4, "Nasi Goreng", 40000));
-            
+            ArrayList<Product> prods = new Product().get();
             request.setAttribute("list", prods);
             
             request.getRequestDispatcher("view_product.jsp").forward(request, response);
         } else if ("add".equals(menu)) {
+            request.setAttribute("title", "Tambah Produk");
             request.getRequestDispatcher("form_product.jsp").forward(request, response);
         } else if ("edit".equals(menu)) {
-            //get one data from database
             request.setAttribute("title", "Edit Produk");
-            Product p = new Product(2, "Nasi Goreng", 15000);
+            request.setAttribute("action", "?id=" + request.getParameter("id"));
+            Product p = new Product().find(request.getParameter("id"));
+            if (p == null) {
+                response.sendRedirect("product");
+                return;
+            }
             request.setAttribute("product", p);
 
             request.getRequestDispatcher("form_product.jsp").forward(request, response);
+        } else if ("custom".equals(menu)) {
+            request.setAttribute("title", "Daftar Produk (custom query)");
+            ArrayList<ArrayList<Object>> prods = new Product().query("SELECT * FROM product WHERE name='iphone'");
+            request.setAttribute("list", prods);
+            
+            request.getRequestDispatcher("view_rdbms.jsp").forward(request, response);
         }
     }
 
@@ -61,6 +67,33 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        
+        String action = request.getParameter("action");
+        String id = request.getParameter("id");
+        if (id == null) { //insert data
+            
+            Product p = new Product();
+            p.setName(request.getParameter("name"));
+            p.setPrice(Double.parseDouble(request.getParameter("price")));
+            p.insert();
+            request.getSession().setAttribute("msg", "Produk berhasil ditambah");
+            
+        } else if (action == null) { //update data
+            
+            
+            Product p = new Product ();
+            p.setId(Integer.parseInt(id));
+            p.setName(request.getParameter("name"));
+            p.setPrice (Double.parseDouble(request.getParameter("price"))); p.update();
+            request.getSession().setAttribute("msg", "Produk berhasil diubah");
+
+        } else if ("del".equals(action)) { //delete data
+            
+            Product p = new Product().find(request.getParameter("id")); if (p != null) p.delete();
+            request.getSession().setAttribute("msg", "Produk berhasil dihapus") ;
+        }
+        response.sendRedirect("product");
        
     }
 

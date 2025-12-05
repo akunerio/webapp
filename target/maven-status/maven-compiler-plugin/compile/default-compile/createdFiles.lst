@@ -4,3 +4,4 @@ controllers/AuthController.class
 com/mycompany/webapp/resources/JakartaEE11Resource.class
 controllers/HomeController.class
 controllers/ProductController.class
+models/Model.class
